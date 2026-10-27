@@ -10,10 +10,15 @@ It's a free system from [Actual Insight](https://www.actualinsight.com/systems/r
 |---|---|---|
 | **Context** | [`context/`](context/context.md) | The business, the data dictionary, the metric definitions. The AI never has to guess. |
 | **Process** | [`.claude/skills/`](.claude/skills/) | Three skills that follow the same method every time: [`ad-hoc-analysis`](.claude/skills/ad-hoc-analysis/SKILL.md), [`query-builder`](.claude/skills/query-builder/SKILL.md), [`dashboard-builder`](.claude/skills/dashboard-builder/SKILL.md). Plus [`project-setup`](.claude/skills/project-setup/SKILL.md), which installs everything on first run. |
-| **Tools** | [`data/`](data/context.md) + `query-builder` | A local DuckDB database, and the query tool that lives in the `query-builder` skill |
+| **Tools** | [`data/`](data/context.md) + `query-builder` + `dashboard-builder` | A local DuckDB database and the query tool that reads it (Python, with `duckdb` and `pandas`); the scripts that build each dashboard, with charts drawn by Chart.js, and check it before it's handed over |
 | **Structure** | [`workbench/`](workbench/context.md) | Every output lands here, in a structure the analyst designs, so nothing gets lost: each analysis gets a folder with its record, queries, data and dashboard |
 
 Agent instructions live in [AGENTS.md](AGENTS.md). [CLAUDE.md](CLAUDE.md) points Claude Code to the same file. The brand for dashboards lives in [.claude/skills/dashboard-builder/brand/](.claude/skills/dashboard-builder/brand/README.md).
+
+## Built with
+
+- **Python** with **DuckDB** and **pandas** (listed in `requirements.txt`), for the database and queries.
+- **[Chart.js](https://www.chartjs.org)** for the dashboard charts. It's bundled in the `dashboard-builder` skill, so dashboards work offline and can be emailed. MIT license.
 
 ## Setup
 

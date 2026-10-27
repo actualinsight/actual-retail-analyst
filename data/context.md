@@ -12,7 +12,7 @@ The data is fictional: orders for a made-up restaurant chain.
 
 ## Using your own data instead
 
-This folder is the "Tools" part of the system: it's how the agent reaches the data. Here that's a local DuckDB file, but the data can live anywhere the agent can query, such as a warehouse like BigQuery or Snowflake.
+This folder is part of the "Tools" in the system: it's how the agent reaches the data. Here that's a local DuckDB file, but the data can live anywhere the agent can query, such as a warehouse like BigQuery or Snowflake.
 
 To switch, change three things:
 - **The connection:** how the `query-builder` skill runs a query, whether that's a database driver or a connector.
