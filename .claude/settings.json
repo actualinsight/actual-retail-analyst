@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python .claude/skills/query-builder/query.py *)",
+      "Bash(.venv/bin/python .claude/skills/dashboard-builder/build_dashboard.py *)",
+      "Bash(.venv/bin/python .claude/skills/dashboard-builder/check_dashboard.py *)",
+      "Bash(.venv/Scripts/python.exe .claude/skills/query-builder/query.py *)",
+      "Bash(.venv/Scripts/python.exe .claude/skills/dashboard-builder/build_dashboard.py *)",
+      "Bash(.venv/Scripts/python.exe .claude/skills/dashboard-builder/check_dashboard.py *)",
+      "Edit(workbench/**)"
+    ]
+  }
+}
