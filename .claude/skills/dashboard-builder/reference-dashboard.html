@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!--
+  REFERENCE DASHBOARD: the approved look. Copy its structure and styling; change the
+  content, tabs and charts to fit each analysis. Build it with build_dashboard.py,
+  which fills the three markers. Data arrives as DATA["<csv file stem>"] = list of rows.
+
+  Opened on its own, this file is blank: the brand, chart library and data only arrive
+  at build time. To see it built, open the example analysis's dashboard.html
+  (workbench/ad-hoc-analysis/20261026_same_store_sales_by_market/).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Same-Store Sales by Market</title>
+<!-- BRAND_HEAD -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--background); color: var(--text); font-family: var(--font); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 16px 48px; }
+  .card { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 22px 24px; }
+  .head { display: flex; gap: 16px; align-items: flex-start; }
+  .mark { width: 48px; height: 48px; flex: none; }
+  .mark svg { width: 100%; height: 100%; display: block; }
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin: 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .badge { font-size: 12px; font-weight: 600; background: color-mix(in srgb, var(--accent) 12%, white); color: var(--accent); border-radius: 6px; padding: 3px 8px; }
+  .sub { opacity: 0.75; font-size: 14px; margin-top: 4px; }
+  .tabs { display: flex; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+  .tab { border: 1px solid var(--rule); border-radius: 8px; padding: 8px 14px; font: 500 14px var(--font); background: var(--card); color: var(--text); cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--text); color: var(--card); border-color: var(--text); }
+  .answer { margin-top: 18px; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.35; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 14px; }
+  .tile .k { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; }
+  .tile .v { font-size: 34px; font-weight: 700; letter-spacing: -0.03em; margin-top: 8px; }
+  .tile .s { font-size: 13px; opacity: 0.75; margin-top: 6px; }
+  .pos { color: var(--positive); } .neg { color: var(--negative); }
+  /* Charts sit two per row; a 3rd or 4th chart simply wraps. Add class "wide" to a card for full width. */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+  .grid2 .wide { grid-column: 1 / -1; }
+  .chartbox.tall { height: 440px; }
+  h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .h3sub { opacity: 0.75; font-size: 13px; margin: 3px 0 12px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+  .chartbox { position: relative; height: 260px; }
+  .findings { margin-top: 14px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+  .findings ol { margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14.5px; }
+  .findings li { margin-bottom: 8px; }
+  .caveat { border-left: 4px solid var(--negative); background: color-mix(in srgb, var(--negative) 7%, white); padding: 12px 14px; border-radius: 6px; font-size: 13.5px; line-height: 1.5; margin-top: 10px; }
+  .next { border-left: 4px solid var(--highlight); background: color-mix(in srgb, var(--highlight) 10%, white); padding: 12px 14px; border-radius: 6px; font-size: 13.5px; line-height: 1.5; margin-bottom: 10px; }
+  .foot { margin-top: 14px; font-size: 12.5px; opacity: 0.8; display: flex; gap: 18px; flex-wrap: wrap; }
+  .foot span { background: var(--card); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 6px; font-family: ui-monospace, monospace; font-size: 12px; }
+  @media (max-width: 860px) { .tiles { grid-template-columns: 1fr 1fr; } .grid2, .findings { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .tiles { grid-template-columns: 1fr; } h1 { font-size: 21px; } .answer { font-size: 17px; } .card { padding: 18px 16px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card">
+    <div class="head">
+      <div class="mark"><!-- LOGO --></div>
+      <div>
+        <h1>Same-Store Sales by Market <span class="badge">Nov 2025 – Oct 2026 vs prior year</span></h1>
+        <div class="sub">Ad-hoc analysis · comp stores · all channels · USD</div>
+      </div>
+    </div>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="answer" id="answer"></div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid2">
+    <div class="card"><h3 id="c1-title"></h3><div class="h3sub" id="c1-sub"></div><div class="chartbox"><canvas id="c1"></canvas></div></div>
+    <div class="card"><h3 id="c2-title"></h3><div class="h3sub" id="c2-sub"></div><div class="chartbox"><canvas id="c2"></canvas></div></div>
+  </div>
+
+  <div class="findings">
+    <div class="card">
+      <h3>Key findings</h3>
+      <div class="h3sub">So what</div>
+      <ol id="findings"></ol>
+      <div id="caveats"></div>
+    </div>
+    <div class="card">
+      <h3>Now what</h3>
+      <div class="h3sub">Suggested next steps</div>
+      <div id="next"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>01_sss_by_market.sql</span><span>01_sss_by_market.csv</span>
+    <span>02_sss_by_market_month.sql</span><span>02_sss_by_market_month.csv</span>
+    <span>context.md</span><span>metrics.md</span>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+// Everything lives inside this function so page names can never clash with
+// browser built-ins (a top-level `const top`, `name` or `status` breaks the page).
+(() => {
+/* ---------- helpers ---------- */
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+// Round half away from zero, the way people (and context.md) round: 12.35 -> 12.4.
+const round = (v, d = 1) => Math.sign(v) * Math.round(Math.abs(v) * 10 ** d + 1e-9) / 10 ** d;
+const sign = v => (v > 0 ? '+' : v < 0 ? '−' : '');
+const pct = (v, d = 1) => sign(round(v, d)) + Math.abs(round(v, d)).toFixed(d) + '%';
+// A difference between two percentages is in points, not percent.
+const pts = (v, d = 1) => sign(round(v, d)) + Math.abs(round(v, d)).toFixed(d) + ' pts';
+const cls = v => (v < 0 ? 'neg' : 'pos');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+/* ---------- data (never typed by hand: all from the CSVs) ---------- */
+const summary = DATA['01_sss_by_market'];
+const monthly = DATA['02_sss_by_market_month'];
+// Rows arrive sorted by display_order (the query's ORDER BY), which fixes each market's color.
+const markets = summary.filter(r => r.market_code !== 'ALL');
+const total = summary.find(r => r.market_code === 'ALL');   // the query labels its total row 'ALL'
+const byCode = code => markets.find(m => m.market_code === code);  // look rows up by code, never by position
+// Each market keeps one color everywhere: series colors in lookup-table order.
+const color = {};
+markets.forEach((m, i) => { color[m.market_code] = css('--series-' + i); });
+const months = [...new Set(monthly.map(r => r.month))];
+const monthLabel = m => new Date(m + '-01T00:00').toLocaleString('en', { month: 'short' });
+
+/* ---------- words (written by the agent, numbers taken from the CSVs) ---------- */
+const VIEWS = {
+  ALL: {
+    label: 'All markets',
+    answer: `Same-store sales grew <b>${pct(total.sss_pct)}</b> across the chain. Mexico leads, the US is steady, and Canada is declining because it's losing guests.`,
+    findings: [
+      `<b>Mexico is the growth engine (${pct(byCode('MX').sss_pct)}).</b> More guests and bigger checks, building through the year.`,
+      `<b>Canada's check growth hides a traffic problem.</b> Check ${pct(byCode('CA').avg_check_pct)}, but guest visits ${pct(byCode('CA').traffic_pct)}.`,
+      `<b>US growth is mostly check (${pct(byCode('US').avg_check_pct)})</b> rather than traffic (${pct(byCode('US').traffic_pct)}).`,
+    ],
+    caveats: ['Mexico’s sales include delivery tips and fees (its POS can’t separate them). Growth rates are barely affected; don’t compare its average check with other markets.'],  // data issue MX-TIPS-FEES
+    next: ['Break Canada’s traffic decline down by store and channel.', 'Split US check growth into menu price and channel mix.'],
+  },
+  US: { label: 'United States', answer: '', findings: [], caveats: [], next: ['Split check growth into menu price and channel mix.'] },
+  CA: { label: 'Canada', answer: '', findings: [], caveats: [], next: ['Find which restaurants and channels lost the most guests.'] },
+  MX: { label: 'Mexico', answer: '', findings: [], caveats: ['Sales include delivery tips and fees; growth rates are barely affected.'], next: ['Check whether new-store momentum is continuing.'] },  // data issue MX-TIPS-FEES
+};
+markets.forEach(m => {
+  const v = VIEWS[m.market_code];
+  v.answer = `${m.market_name} same-store sales: <b>${pct(m.sss_pct)}</b>, from traffic ${pct(m.traffic_pct)} and average check ${pct(m.avg_check_pct)} across ${m.comp_stores} comp stores.`;
+  v.findings = [m.traffic_pct < 0
+    ? `<b>Fewer guests.</b> Traffic ${pct(m.traffic_pct)} is the drag; higher checks only partly offset it.`
+    : `<b>Both guests and spend are up.</b> Traffic ${pct(m.traffic_pct)}, check ${pct(m.avg_check_pct)}.`];
+});
+
+/* ---------- charts ---------- */
+Chart.defaults.font.family = css('--font');
+Chart.defaults.color = css('--text');
+const grid = { color: css('--rule') };
+const pctAxis = { grid, ticks: { callback: v => v + '%' } };
+const tip = { callbacks: { label: c => `${c.dataset.label}: ${pct(c.raw)}` } };
+let charts = [];
+
+function driversChart(rows) {
+  const measures = [['traffic_pct', 'Traffic'], ['avg_check_pct', 'Average check'], ['sss_pct', 'Same-store sales']];
+  return {
+    type: 'bar',
+    data: { labels: measures.map(m => m[1]),
+            datasets: rows.map(r => ({ label: r.market_name, data: measures.map(m => r[m[0]]),
+                                       backgroundColor: color[r.market_code], borderRadius: 4 })) },
+    options: { maintainAspectRatio: false, plugins: { legend: { position: 'top', align: 'end' }, tooltip: tip },
+               scales: { y: pctAxis, x: { grid: { display: false } } } },
+  };
+}
+
+function monthlyChart(codes) {
+  return {
+    type: 'line',
+    data: { labels: months.map(monthLabel),
+            datasets: codes.map(code => ({
+              label: markets.find(m => m.market_code === code).market_name,
+              data: months.map(mo => monthly.find(r => r.month === mo && r.market_code === code).sss_pct),
+              borderColor: color[code], backgroundColor: color[code], tension: 0.3, pointRadius: 3, borderWidth: 2.5 })) },
+    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+               plugins: { legend: { position: 'top', align: 'end' }, tooltip: tip },
+               scales: { y: pctAxis, x: { grid: { display: false } } } },
+  };
+}
+
+/* ---------- render one view ---------- */
+function render(key) {
+  const view = VIEWS[key];
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.key === key));
+  document.getElementById('answer').innerHTML = view.answer;
+
+  const tiles = key === 'ALL'
+    ? [{ k: 'All markets', v: total.sss_pct, s: `${total.comp_stores} comp stores · traffic ${pct(total.traffic_pct)} · check ${pct(total.avg_check_pct)}` }]
+        .concat(markets.map(m => ({ k: m.market_name, v: m.sss_pct, s: `traffic ${pct(m.traffic_pct)} · check ${pct(m.avg_check_pct)}` })))
+    : (m => [{ k: 'Same-store sales', v: m.sss_pct, s: `${m.comp_stores} comp stores` },
+             { k: 'Traffic', v: m.traffic_pct, s: 'guest visits' },
+             { k: 'Average check', v: m.avg_check_pct, s: 'spend per visit' },
+             { k: 'vs all markets', v: m.sss_pct - total.sss_pct, s: `chain ${pct(total.sss_pct)}`, fmt: pts }])(markets.find(m => m.market_code === key));
+  document.getElementById('tiles').innerHTML = tiles.map(t =>
+    `<div class="card tile"><div class="k">${esc(t.k)}</div><div class="v ${cls(t.v)}">${(t.fmt || pct)(t.v)}</div><div class="s">${esc(t.s)}</div></div>`).join('');
+
+  document.getElementById('findings').innerHTML = view.findings.map(f => `<li>${f}</li>`).join('');
+  document.getElementById('caveats').innerHTML = view.caveats.map(c => `<div class="caveat"><b>Caveat:</b> ${esc(c)}</div>`).join('');
+  document.getElementById('next').innerHTML = view.next.map(n => `<div class="next">${esc(n)}</div>`).join('');
+
+  charts.forEach(c => c.destroy());
+  const rows = key === 'ALL' ? markets : markets.filter(m => m.market_code === key);
+  const codes = rows.map(r => r.market_code);
+  document.getElementById('c1-title').textContent = 'What’s driving it: traffic vs. average check';
+  document.getElementById('c1-sub').textContent = 'Year-over-year change at comp stores, %';
+  document.getElementById('c2-title').textContent = 'Same-store sales by month';
+  document.getElementById('c2-sub').textContent = 'Each month vs. the same month last year, %';
+  charts = [new Chart(document.getElementById('c1'), driversChart(rows)),
+            new Chart(document.getElementById('c2'), monthlyChart(codes))];
+}
+
+/* ---------- tabs ---------- */
+document.getElementById('tabs').innerHTML = Object.entries(VIEWS).map(([key, v]) =>
+  `<button class="tab" role="tab" data-key="${key}">${esc(v.label)}</button>`).join('');
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => render(t.dataset.key)));
+render('ALL');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+market_code,market_name,comp_stores,full_year_comp_stores,sales_ty_usd,sales_ly_usd,sss_pct,traffic_pct,avg_check_pct
+US,United States,21,18,32908101.12,30830398.88,6.7391,2.4153,4.2219
+CA,Canada,14,13,16628648.35,17272054.77,-3.7251,-6.8584,3.364
+MX,Mexico,7,5,6283336.57,5689260.86,10.4421,3.7838,6.4155
+ALL,All markets,42,36,55820086.04,53791714.51,3.7708,-0.5843,4.3807

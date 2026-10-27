@@ -1,0 +1,6 @@
+# Install with: pip install -r requirements.txt
+# duckdb 2 and pandas 3 need Python 3.11+; older Pythons get the last versions that support them.
+duckdb==1.4.5; python_version < "3.11"
+duckdb==2.0.0; python_version >= "3.11"
+pandas==2.3.3; python_version < "3.11"
+pandas==3.1.0; python_version >= "3.11"

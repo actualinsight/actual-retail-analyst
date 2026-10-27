@@ -1,0 +1,14 @@
+# The database is downloaded on first run (see the project-setup skill), not stored in git
+*.duckdb
+*.duckdb.wal
+# The downloaded zip, and half-written files from a failed pull (query-builder) or build (dashboard-builder)
+*.zip
+*.partial
+*.building
+
+# Python
+.venv/
+__pycache__/
+
+# macOS
+.DS_Store
