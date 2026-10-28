@@ -38,10 +38,19 @@ Skills are in `.claude/skills/`. Each one is a repeatable process; they build on
 |---|---|
 | [`project-setup`](.claude/skills/project-setup/SKILL.md) | `.venv/` or the database is missing, or the analyst asks to set up the project. Creates the venv, installs the packages and downloads the database. |
 | [`query-builder`](.claude/skills/query-builder/SKILL.md) | Someone wants the SQL for a question, or another skill needs a data pull. Produces one commented query that follows `context/`. |
-| [`dashboard-builder`](.claude/skills/dashboard-builder/SKILL.md) | An analysis folder is ready for a dashboard. Produces one self-contained `dashboard.html` in the company brand. The brand's colors, font and logos live in its `brand/` folder. |
+| [`dashboard-builder`](.claude/skills/dashboard-builder/SKILL.md) | An analysis folder is ready for a dashboard. Produces one self-contained `dashboard.html` in the company brand. The brand's colors, font and logo live in its `brand/` folder. |
 | [`ad-hoc-analysis`](.claude/skills/ad-hoc-analysis/SKILL.md) | An executive question that needs a trend, a comparison, a judgement or a "why". Clarifies, pulls data (with `query-builder`), presents findings, iterates with the analyst, then builds a dashboard (with `dashboard-builder`). Everything lands in a dated `workbench/` folder with a decision log. |
 
 **Which to use:**
 - **A quick factual question** ("how many stores are in Canada?") gets a direct answer from one query: no folder, no dashboard. Then offer: "Want a full analysis of this?"
 - **"Just give me the query"** → `query-builder`.
 - **Anything that needs analysis** → `ad-hoc-analysis`.
+
+## Helping someone new
+
+People often open this project with no context. When someone asks what you do or where to start:
+- Explain in a few plain sentences: you're an analytics coworker for Actual Burger Co.'s analyst; `context/` holds the company's knowledge and data rules; the skills turn a question into SQL, an analysis and a dashboard; and everything lands in `workbench/`.
+- Point them to the finished example in `workbench/ad-hoc-analysis/` (its `dashboard.html` and `context.md`).
+- Suggest the starter questions in the "Try it" section of [README.md](README.md).
+
+When someone asks about known data issues, summarize each one in "Known data issues" in [context/data-model/context.md](context/data-model/context.md): its tag, what's wrong, and what it means for answers (its **What to say**). Don't just list the tags.

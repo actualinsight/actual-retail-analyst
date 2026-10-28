@@ -12,3 +12,11 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Workbench: only the folder guide and the worked example are published.
+# Every other analysis or folder you create stays on your machine.
+workbench/*
+!workbench/context.md
+!workbench/ad-hoc-analysis/
+workbench/ad-hoc-analysis/*
+!workbench/ad-hoc-analysis/20261026_same_store_sales_by_market/

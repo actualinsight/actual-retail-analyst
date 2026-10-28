@@ -57,7 +57,27 @@ In Command Prompt, activate with `.venv\Scripts\activate.bat` instead.
 
 ## Try it
 
-Open the folder in [Claude Code](https://claude.com/claude-code) and ask a question the way an executive would:
+Open the folder in [Claude Code](https://claude.com/claude-code) and try these, in order. Each one shows the next part of the system.
+
+**1. Get oriented**
+
+> What can you do, and where should I start?
+
+The agent explains how it works and points you to a finished example.
+
+**2. Check the data's known issues**
+
+> Are there any known data issues I should know about?
+
+It walks through the problems documented in the context, and what it tells an executive about each one.
+
+**3. Get a query**
+
+> Write me a query for average check by channel in Canada.
+
+It confirms the period, then hands you commented SQL built on the company's standard definitions, and offers to save it or pull the data.
+
+**4. Run a full analysis**, asking the way an executive would:
 
 > How are same-store sales by market?
 
@@ -66,6 +86,8 @@ The agent will:
 2. create a folder in [`workbench/ad-hoc-analysis/`](workbench/ad-hoc-analysis/) and fill it as it works: the analysis record, SQL and CSV files;
 3. walk you through what it found;
 4. once you're happy, build the dashboard.
+
+Once there's a dashboard, ask for changes ("make the trend chart a bar chart", "add a note under the Canada chart") and the agent updates it.
 
 You can also type `/ad-hoc-analysis` directly, or ask for "just the SQL" (`query-builder`).
 

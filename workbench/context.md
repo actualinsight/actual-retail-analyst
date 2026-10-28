@@ -13,6 +13,7 @@ workbench/
 
 - **Analysis folders** are named and created by the [`ad-hoc-analysis`](../.claude/skills/ad-hoc-analysis/SKILL.md) skill. For a worked example, see [20261026_same_store_sales_by_market/](ad-hoc-analysis/20261026_same_store_sales_by_market/).
 - **Your own folders:** ask the agent ("make a `us-channels` folder and put the query there") or create them yourself.
+- **Your work stays on your machine.** Git ignores everything here except this file and the worked example, so new analyses and folders aren't committed by accident. To publish one, add it as an exception in `.gitignore`.
 
 ## Inside an analysis folder
 
